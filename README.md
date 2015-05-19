@@ -15,11 +15,15 @@ How to play:  Setup:
 1.  Install your midi keyboard and drivers for it.
 2.  Connect the keyboard and power it up.
 3.  Run the app compiled from this program.
+4.  Select the input device and output device (so you can hear what is heard ingame without lag).  Microsoft wavesynth will have lag in it so its best to use your midi keyboard output if it exists.
+5.  Check the connect box next to the input and output devices.
+6. Start playing!
+
 
 Playing:
 
-4.  Launch Guildwars 2.  Log in, grab an instrument (harp works best).
-5.  Start the instrument, then start playing on your keyboard.  You should hear the same sounds in game.
+1.  Launch Guildwars 2.  Log in, grab an instrument (harp works best).
+2.  Start the instrument, then start playing on your keyboard.  You should hear the same sounds in game.
 
 Other features:
 Numeric spinner with the 30:  used to tune the delay between virtual keyboard presses, now does nothing.
@@ -34,3 +38,7 @@ Flute:  Check if playing the flute (changes the octave manager)  Flute plays in 
 Bass:  check if playing the bass.  The bass has only 2 octaves.
 Flat:  Check if off C and playing a key with flats in it.  This shifts the flats up.  Uncheck for keys with Sharps.
 
+Limitations and notes:
+There is currently a limitation where Guildwars 2 does not have the Black keys on instruments.  This prevents key changes and playing naturally outside of C or A minor.  Keys F and G may be faked to a degree depending on the song:  Check the Flat to play F# as G, uncheck it to play Bb as A.  This turns Bb chord into Dm, and D chord to Dsus4.  In G key i recommend playing D5 instead if you want the D chord as this does not use the F#.
+
+The transposer works best with D, E, and B keys.  It does not support half tone keys (like Eb)
