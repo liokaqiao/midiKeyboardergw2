@@ -1,0 +1,15 @@
+c:\users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Debug\midiKeyboarder.exe.config
+c:\users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Debug\midiKeyboarder.exe
+c:\users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Debug\midiKeyboarder.pdb
+c:\users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Debug\Midi.dll
+c:\users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Debug\Midi.xml
+c:\users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\obj\Debug\midiKeyboarder.csprojResolveAssemblyReference.cache
+c:\users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\obj\Debug\midiKeyboarder.Properties.Resources.resources
+c:\users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\obj\Debug\midiKeyboarder.csproj.GenerateResource.Cache
+c:\users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\obj\Debug\midiKeyboarder.exe
+c:\users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\obj\Debug\midiKeyboarder.pdb
+c:\users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Debug\InputSimulator.dll
+c:\users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Debug\InputSimulator.pdb
+c:\users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Debug\InputSimulator.xml
+C:\Users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Debug\InputManager.dll
+C:\Users\potato1\documents\visual studio 2013\Projects\midiKeyboarder\midiKeyboarder\obj\Debug\midiKeyboarder.Form1.resources
