@@ -8,7 +8,8 @@ http://www.codeproject.com/Articles/117657/InputManager-library-Track-user-input
 Midi .net
 https://code.google.com/p/midi-dot-net/
 
-
+Getting it:
+If you don't have app building ability click the get zip button to the right.  There will be a folder in there "release" which has the app pre-built.
 
 How to play:  Setup:
 
