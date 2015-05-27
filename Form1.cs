@@ -34,8 +34,8 @@ const byte  VK_9      =   0x39 ;
         int octave = 4;
         List<Midi.Pitch> keysDown;
 
-        
-
+        Midi.OutputDevice od;
+        Midi.Clock clock;
 
         private const int KEYEVENTF_EXTENDEDKEY = 1;
         private const int KEYEVENTF_KEYUP = 2;
@@ -95,26 +95,78 @@ const byte  VK_9      =   0x39 ;
         {
             InitializeComponent();
             CheckForIllegalCrossThreadCalls = false;
-            System.Diagnostics.Trace.WriteLine(transpose("C4", 1));
+            Midi.Pitch outpitch;
+            System.Diagnostics.Trace.WriteLine(transpose("C4", 1, out outpitch));
 
-            System.Diagnostics.Trace.WriteLine(transpose("C4", -1));
+            System.Diagnostics.Trace.WriteLine(transpose("C4", -1, out outpitch));
 
+            clock = new Midi.Clock(999);
 
+            foreach (Midi.InputDevice dev in Midi.InputDevice.InstalledDevices)
+                cbInputDevice.Items.Add(dev.Name);
+
+            foreach (Midi.OutputDevice dev in Midi.OutputDevice.InstalledDevices)
+                cbOutputDevice.Items.Add(dev.Name);
+
+            if (cbInputDevice.Items.Count != 0)
+                cbInputDevice.SelectedIndex = 0;
+            if (cbOutputDevice.Items.Count != 0)
+                cbOutputDevice.SelectedIndex = 0;
+
+            if (cbInputDevice.Items.Count == 0)
+                label1.Text = "No midi input device found! app will not work!";
 
             locker = new object();
-            keybd = Midi.InputDevice.InstalledDevices[0];
+           
+         
+           
+            
+        }
+        void startOutputDevice(int xod)
+        {
+            od = Midi.OutputDevice.InstalledDevices[xod];
+            od.Open();
+            od.SendControlChange(Midi.Channel.Channel1, Midi.Control.Volume, 127); //max the volume
+        }
+        void startInputDevice(int id)
+        {
+            keybd = Midi.InputDevice.InstalledDevices[id];
             keybd.NoteOn += keybd_NoteOn;
             keybd.NoteOff += keybd_NoteOff;
+            keybd.ControlChange += keybd_ControlChange;
             keybd.Open();
-            keybd.StartReceiving(null);
+
+            keybd.StartReceiving(clock);
             keysDown = new List<Midi.Pitch>();
             keybdx = new InputManager.VirtualKeyboard();
             keyQueue = new Queue<Keys>();
             System.Threading.Thread keythreadx = new System.Threading.Thread(keythread);
             keythreadx.Start();
-
         }
 
+        void keybd_ControlChange(Midi.ControlChangeMessage msg)
+        {
+            if (msg.Control == Midi.Control.Volume && cbConnectOutput.Checked)
+                od.SendControlChange(Midi.Channel.Channel1, Midi.Control.Volume, msg.Value);
+
+        }
+        void stopInputDevice()
+        {
+            if (keybd == null) //ping
+                return;
+            keybd.StopReceiving();
+            keybd.Close();
+            keybd.RemoveAllEventHandlers();
+
+        }
+        void stopOutputDevice()
+        {
+            if (od == null)
+                return;
+            od.SilenceAllNotes();
+            od.Close();
+            
+        }
         void queueKeyPress(Keys k, int delay)
         {
             lock(locker)
@@ -190,10 +242,19 @@ const byte  VK_9      =   0x39 ;
         }
         void keybd_NoteOff(Midi.NoteOffMessage msg)
         {
-            System.Diagnostics.Trace.WriteLine("of" + msg.Pitch.ToString());
+            System.Diagnostics.Trace.WriteLine("off" + msg.Pitch.ToString());
+            if (keysDown.Contains(msg.Pitch))
+            {
+                //InputManager.Keyboard.KeyUp(lastCode);
+                string pitchIn = msg.Pitch.ToString();
+                Midi.Pitch outPitch;
+                string pitchout = transpose(pitchIn, -comboBox1.SelectedIndex, out outPitch);
+                keysDown.Remove(msg.Pitch);
+                od.SendNoteOff(Midi.Channel.Channel1, outPitch, 127);
+            }
         }
 
-        string transpose(string musicKey, int direction)
+        string transpose(string musicKey, int direction,out Midi.Pitch outpitch)
         {
             //convert the key to a number:
             //"G8" = 8 * "8" + 7
@@ -213,15 +274,43 @@ const byte  VK_9      =   0x39 ;
             
 
             int keyID = y * 7 + x;
+            switch((string)comboBox1.SelectedValue)
+            {
+                case "G":
+                    direction = 3;
+                    break;
+                case "A": direction = 2;
+                    break;
+
+                case "B":
+                    direction =1;
+                    break;
+                    
+                    
+
+            }
+
             keyID += direction;
+            
+            ;
 
             y = keyID / 7;
             x = keyID % 7;
-            return "" + scale[x] + y.ToString();
+           string preout = "" + scale[x] +  ((black)?("Sharp"):("")) +y.ToString();
 
+           string cnote = "" + preout[0];
+          // bool sharp = musicKey.Contains("Sharp");
+           
+          if (black)
+               cnote += "#";
+            Midi.Note outnote = new Midi.Note(cnote);
+            outpitch = outnote.PitchInOctave(y);
+           return preout;
 
         }
 
+
+       
         void keyToCode(string musicKey, out Keys code, out int octave)
         {
             //C3
@@ -259,6 +348,8 @@ const byte  VK_9      =   0x39 ;
        // WindowsInput.VirtualKeyCode lastCode = WindowsInput.VirtualKeyCode.NONAME;
         void keybd_NoteOn(Midi.NoteOnMessage msg)
         {
+            System.Diagnostics.Stopwatch sw1 = new System.Diagnostics.Stopwatch();
+            sw1.Start();
            // if (lastCode != WindowsInput.VirtualKeyCode.NONAME)
               //  WindowsInput.InputSimulator.SimulateKeyUp(lastCode);
             System.Diagnostics.Trace.WriteLine("of" + msg.Pitch.ToString());
@@ -270,15 +361,23 @@ const byte  VK_9      =   0x39 ;
             if (keysDown.Contains(msg.Pitch))
             {
                 //InputManager.Keyboard.KeyUp(lastCode);
+                string pitchIn = msg.Pitch.ToString();
+                Midi.Pitch outPitch;
+                string pitchout = transpose(pitchIn, -comboBox1.SelectedIndex, out outPitch);
                 keysDown.Remove(msg.Pitch);
+                if(cbConnectOutput.Checked)
+                od.SendNoteOff(Midi.Channel.Channel1, outPitch, 127);
             }
             else
             {
+                Midi.Pitch outPitch;
                string pitchIn = msg.Pitch.ToString();
-               string pitchout = transpose(pitchIn, -comboBox1.SelectedIndex);
+               string pitchout = transpose(pitchIn, -comboBox1.SelectedIndex, out outPitch);
               //  if(comboBox1.SelectedValue == "B" || comboBox1.SelectedValue == "A" || comboBox1.SelectedValue == "G")
                //  pitchout = transpose(pitchIn, comboBox1.SelectedIndex);
                 System.Diagnostics.Trace.WriteLine("transpose " + pitchIn + " " + pitchout);
+                if(cbConnectOutput.Checked)
+                    od.SendNoteOn(Midi.Channel.Channel1, outPitch, 127/*msg.Velocity*/);
                 keyToCode(pitchout, out lastCode, out o);
                 setOctave(o, false);
                 queueKeyPress(lastCode, (int)nudDelayTuner.Value);
@@ -286,6 +385,8 @@ const byte  VK_9      =   0x39 ;
                
                 keysDown.Add(msg.Pitch);
             }
+            sw1.Stop();
+            System.Diagnostics.Trace.WriteLine("timed " + sw1.Elapsed.TotalSeconds.ToString());
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -369,6 +470,26 @@ const byte  VK_9      =   0x39 ;
         {
             Properties.Settings.Default.y = (int)nudCapy.Value;
             Properties.Settings.Default.Save();
+        }
+
+        private void cbConnect_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbConnect.Checked)
+            {
+                startInputDevice(cbInputDevice.SelectedIndex);
+
+
+            }
+            else
+                stopInputDevice();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbConnectOutput.Checked)
+                startOutputDevice(cbOutputDevice.SelectedIndex);
+            else
+                stopOutputDevice();
         }
     }
 }
