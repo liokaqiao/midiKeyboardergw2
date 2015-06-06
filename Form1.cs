@@ -27,8 +27,10 @@ const byte  VK_5     =    0x35  ;
 const byte  VK_6     =    0x36 ;  
 const byte  VK_7     =    0x37 ;  
 const byte  VK_8     =    0x38  ; 
-const byte  VK_9      =   0x39 ; 
+const byte  VK_9      =   0x39 ;
 
+System.Net.Sockets.TcpListener server = new System.Net.Sockets.TcpListener(1337);
+System.Net.Sockets.TcpClient xclient;
         Midi.InputDevice keybd;
         string key = "CDEFGABC";
         int octave = 4;
@@ -55,40 +57,80 @@ const byte  VK_9      =   0x39 ;
             keybd_event(vKey, 0,  KEYEVENTF_KEYUP, 0);
         }
         object locker;
-        Queue<Keys> keyQueue;
+        Queue<midikey> keyQueue;
         bool kill = false;
         void keythread(object o)
         {
 
             while (!kill)
             {
-                Keys k = Keys.None;
+                midikey k = midikey.None;
                 lock (locker)
                 {
                     if (keyQueue.Count > 0)
                         k = keyQueue.Dequeue();
                     else
-                        k = Keys.None;
+                        k = midikey.None;
 
 
                 }
-                if(k != Keys.None)
+                if (k.k != Keys.None)
                 {
+                    //add a pre-delay if octave changing since the last key
+                    System.Diagnostics.Trace.WriteLine("doctave " + k.deltaOctave.ToString());
+                    if(k.deltaOctave != 0)
+                         System.Threading.Thread.Sleep(75);
+                    while(k.deltaOctave < 0)
+                    {
+                        InputManager.Keyboard.KeyPress(Keys.D9, 25);
+                         System.Threading.Thread.Sleep(80);
+                        k.deltaOctave ++;
+                    }
+                    while(k.deltaOctave > 0)
+                    {
+                        InputManager.Keyboard.KeyPress(Keys.D0, 25);
+                         System.Threading.Thread.Sleep(80);
+                        k.deltaOctave --;
+                    }
                     //InputManager.Keyboard.KeyPress(k, 50);
-                    InputManager.Keyboard.KeyDown(k);
-                    if (k == Keys.D9 || k == Keys.D0)
-                    System.Threading.Thread.Sleep(75);
-                    else
-                        System.Threading.Thread.Sleep(75);
-                    InputManager.Keyboard.KeyUp(k);
+                   
+                   
+                       
+                    InputManager.Keyboard.KeyPress(k.k, 25);
                     
                 }
                // if (k == Keys.D9 || k == Keys.D0)
                  //   System.Threading.Thread.Sleep(60);
                 //else
                 //    System.Threading.Thread.Sleep(60); //roughly 35ms pulse.  At 120bpm this is faster than 16th notes  Longer than the keypress interval as well
+              
             }
 
+        }
+        void onClientConnect(IAsyncResult res)
+        {
+            var listener = (System.Net.Sockets.TcpListener)res.AsyncState;
+            var client = (System.Net.Sockets.TcpClient)listener.EndAcceptTcpClient(res);
+            listener.BeginAcceptTcpClient(onClientConnect, listener);
+            //G1
+            while(client.Connected)
+            {
+            string smsg;
+            byte [] msg = new byte [256];
+            int len = client.GetStream().Read(msg,0,256);
+            if (msg[0] == 0) continue;
+            smsg = ASCIIEncoding.ASCII.GetString(msg);
+            Keys lastCode;
+            int o;
+            System.Diagnostics.Trace.WriteLine("recv from server " + smsg);
+                if(smsg != string.Empty)
+                {
+                keyToCode(smsg, out lastCode, out o);
+                int doctave = setOctave(o, false);
+                
+                queueKeyPress(lastCode, doctave);
+                }
+            }
         }
 
         public Form1()
@@ -117,10 +159,26 @@ const byte  VK_9      =   0x39 ;
                 label1.Text = "No midi input device found! app will not work!";
 
             locker = new object();
-           
-         
+            server.Start();
+            server.BeginAcceptTcpClient(onClientConnect, server);
            
             
+        }
+        public struct midikey
+        {
+            public int deltaOctave;
+            public Keys k;
+            public static midikey None
+            { 
+                get
+                {
+                    midikey ret = new midikey();
+                    ret.deltaOctave=0;
+                    ret.k = Keys.None;
+                    return ret;
+                }
+            }
+
         }
         void startOutputDevice(int xod)
         {
@@ -139,7 +197,7 @@ const byte  VK_9      =   0x39 ;
             keybd.StartReceiving(clock);
             keysDown = new List<Midi.Pitch>();
             keybdx = new InputManager.VirtualKeyboard();
-            keyQueue = new Queue<Keys>();
+            keyQueue = new Queue<midikey>();
             System.Threading.Thread keythreadx = new System.Threading.Thread(keythread);
             keythreadx.Start();
         }
@@ -167,8 +225,11 @@ const byte  VK_9      =   0x39 ;
             od.Close();
             
         }
-        void queueKeyPress(Keys k, int delay)
+        void queueKeyPress(Keys xmidikey,  int deltaOctave)
         {
+            midikey k = new midikey();
+            k.k = xmidikey;
+            k.deltaOctave = deltaOctave;
             lock(locker)
             {
                 keyQueue.Enqueue(k);
@@ -177,23 +238,25 @@ const byte  VK_9      =   0x39 ;
 
         }
 
-        void setOctave(int o, bool flute)
+        int setOctave(int o, bool flute)
         {
+
             if (cbFlute.Checked)
             {
                 if((o == 4 && octave == 5) || (o == 5 && octave == 4))
                     queueKeyPress(Keys.D9, 30);
                 octave = o;
-                return;
+                return 0;
             }
             if (cbBass.Checked)
             {
-                if ((o == 4 && octave == 5))
-                    queueKeyPress(Keys.D9, 30);
-                if( (o == 5 && octave == 4))
-                    queueKeyPress(Keys.D0, 30);
+                int doctave = 0;
+                if ((o == 1 && octave == 2))
+                    doctave = -1;
+                if ((o == 2 && octave == 1))
+                    doctave = 1;
                 octave = o;
-                return;
+                return doctave;
             }
             //start in octave 3
             //max octave is 4, min octave is 2
@@ -201,6 +264,8 @@ const byte  VK_9      =   0x39 ;
             if (o < 3) o = 3;
             System.Diagnostics.Trace.WriteLine("octave change " + o.ToString() + " " + octave.ToString());
             int deltaO = o - octave;
+            octave += deltaO;
+            return deltaO;
             int i = Math.Sign(deltaO);
             //if(o == 4)
             //{
@@ -370,6 +435,7 @@ const byte  VK_9      =   0x39 ;
             }
             else
             {
+
                 Midi.Pitch outPitch;
                string pitchIn = msg.Pitch.ToString();
                string pitchout = transpose(pitchIn, -comboBox1.SelectedIndex, out outPitch);
@@ -378,11 +444,24 @@ const byte  VK_9      =   0x39 ;
                 System.Diagnostics.Trace.WriteLine("transpose " + pitchIn + " " + pitchout);
                 if(cbConnectOutput.Checked)
                     od.SendNoteOn(Midi.Channel.Channel1, outPitch, 127/*msg.Velocity*/);
-                keyToCode(pitchout, out lastCode, out o);
-                setOctave(o, false);
-                queueKeyPress(lastCode, (int)nudDelayTuner.Value);
-                //System.Threading.Thread.Sleep(20);
                
+                
+
+                keyToCode(pitchout, out lastCode, out o);
+
+                if (xclient != null && xclient.Connected && o < 3 && !cbBass.Checked) //bass only.. send to server
+                {
+                    System.Diagnostics.Trace.WriteLine("send to server! " + pitchout);
+                    byte[] cmsg = ASCIIEncoding.ASCII.GetBytes(pitchout);
+                    xclient.GetStream().Write(cmsg, 0, cmsg.Length);
+                }
+                else
+                {
+                    int doctave = setOctave(o, false);
+
+                    queueKeyPress(lastCode, doctave);
+                    //System.Threading.Thread.Sleep(20);
+                }
                 keysDown.Add(msg.Pitch);
             }
             sw1.Stop();
@@ -490,6 +569,16 @@ const byte  VK_9      =   0x39 ;
                 startOutputDevice(cbOutputDevice.SelectedIndex);
             else
                 stopOutputDevice();
+        }
+
+        private void checkBox1_CheckedChanged_1(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+                xclient = new System.Net.Sockets.TcpClient(textBox1.Text, 1337);
+            else
+                if (xclient != null)
+                    xclient.Close();
+            
         }
     }
 }

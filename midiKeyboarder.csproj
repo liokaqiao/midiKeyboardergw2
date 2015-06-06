@@ -35,9 +35,6 @@
     <Reference Include="InputManager">
       <HintPath>..\..\..\..\..\Downloads\InputManager\InputManager.dll</HintPath>
     </Reference>
-    <Reference Include="InputSimulator">
-      <HintPath>..\..\..\..\..\Downloads\InputSimulator.0.1.0.0-bin\InputSimulator.0.1.0.0-bin\Release\InputSimulator.dll</HintPath>
-    </Reference>
     <Reference Include="Midi">
       <HintPath>..\..\..\..\..\Downloads\midi-dot-net_1.1.0\midi-dot-net_1.1.0\Midi.dll</HintPath>
     </Reference>

@@ -40,6 +40,13 @@
             this.nudCapx = new System.Windows.Forms.NumericUpDown();
             this.nudCapy = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
+            this.cbConnect = new System.Windows.Forms.CheckBox();
+            this.cbInputDevice = new System.Windows.Forms.ComboBox();
+            this.cbOutputDevice = new System.Windows.Forms.ComboBox();
+            this.cbConnectOutput = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudDelayTuner)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCapx)).BeginInit();
@@ -48,7 +55,7 @@
             // 
             // nudDelayTuner
             // 
-            this.nudDelayTuner.Location = new System.Drawing.Point(86, 47);
+            this.nudDelayTuner.Location = new System.Drawing.Point(157, 214);
             this.nudDelayTuner.Name = "nudDelayTuner";
             this.nudDelayTuner.Size = new System.Drawing.Size(124, 22);
             this.nudDelayTuner.TabIndex = 0;
@@ -70,7 +77,7 @@
             "G",
             "A",
             "B"});
-            this.comboBox1.Location = new System.Drawing.Point(89, 86);
+            this.comboBox1.Location = new System.Drawing.Point(152, 81);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
             this.comboBox1.TabIndex = 1;
@@ -121,7 +128,7 @@
             // 
             // nudCapx
             // 
-            this.nudCapx.Location = new System.Drawing.Point(19, 116);
+            this.nudCapx.Location = new System.Drawing.Point(12, 192);
             this.nudCapx.Maximum = new decimal(new int[] {
             1980,
             0,
@@ -139,7 +146,7 @@
             // 
             // nudCapy
             // 
-            this.nudCapy.Location = new System.Drawing.Point(116, 116);
+            this.nudCapy.Location = new System.Drawing.Point(12, 220);
             this.nudCapy.Maximum = new decimal(new int[] {
             1800,
             0,
@@ -158,17 +165,92 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(31, 141);
+            this.label1.Location = new System.Drawing.Point(163, 192);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(46, 17);
             this.label1.TabIndex = 8;
             this.label1.Text = "label1";
+            // 
+            // cbConnect
+            // 
+            this.cbConnect.AutoSize = true;
+            this.cbConnect.Location = new System.Drawing.Point(152, 12);
+            this.cbConnect.Name = "cbConnect";
+            this.cbConnect.Size = new System.Drawing.Size(117, 21);
+            this.cbConnect.TabIndex = 9;
+            this.cbConnect.Text = "Connect Input";
+            this.cbConnect.UseVisualStyleBackColor = true;
+            this.cbConnect.CheckedChanged += new System.EventHandler(this.cbConnect_CheckedChanged);
+            // 
+            // cbInputDevice
+            // 
+            this.cbInputDevice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbInputDevice.FormattingEnabled = true;
+            this.cbInputDevice.Location = new System.Drawing.Point(12, 10);
+            this.cbInputDevice.Name = "cbInputDevice";
+            this.cbInputDevice.Size = new System.Drawing.Size(121, 24);
+            this.cbInputDevice.TabIndex = 10;
+            // 
+            // cbOutputDevice
+            // 
+            this.cbOutputDevice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbOutputDevice.FormattingEnabled = true;
+            this.cbOutputDevice.Location = new System.Drawing.Point(12, 40);
+            this.cbOutputDevice.Name = "cbOutputDevice";
+            this.cbOutputDevice.Size = new System.Drawing.Size(121, 24);
+            this.cbOutputDevice.TabIndex = 11;
+            // 
+            // cbConnectOutput
+            // 
+            this.cbConnectOutput.AutoSize = true;
+            this.cbConnectOutput.Location = new System.Drawing.Point(152, 42);
+            this.cbConnectOutput.Name = "cbConnectOutput";
+            this.cbConnectOutput.Size = new System.Drawing.Size(129, 21);
+            this.cbConnectOutput.TabIndex = 12;
+            this.cbConnectOutput.Text = "Connect Output";
+            this.cbConnectOutput.UseVisualStyleBackColor = true;
+            this.cbConnectOutput.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(21, 84);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(109, 17);
+            this.label2.TabIndex = 13;
+            this.label2.Text = "Auto Transpose";
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(153, 126);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(121, 21);
+            this.checkBox1.TabIndex = 14;
+            this.checkBox1.Text = "Connect Client";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_1);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(24, 124);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 22);
+            this.textBox1.TabIndex = 15;
+            this.textBox1.Text = "192.168.1.4";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(282, 253);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.cbConnectOutput);
+            this.Controls.Add(this.cbOutputDevice);
+            this.Controls.Add(this.cbInputDevice);
+            this.Controls.Add(this.cbConnect);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.nudCapy);
             this.Controls.Add(this.nudCapx);
@@ -179,7 +261,7 @@
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.nudDelayTuner);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Midi Keyboarder";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.nudDelayTuner)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -202,6 +284,13 @@
         private System.Windows.Forms.NumericUpDown nudCapx;
         private System.Windows.Forms.NumericUpDown nudCapy;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox cbConnect;
+        private System.Windows.Forms.ComboBox cbInputDevice;
+        private System.Windows.Forms.ComboBox cbOutputDevice;
+        private System.Windows.Forms.CheckBox cbConnectOutput;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 

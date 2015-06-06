@@ -1,11 +1,6 @@
 C:\Users\potato1\Documents\Visual Studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Release\midiKeyboarder.exe.config
 C:\Users\potato1\Documents\Visual Studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Release\midiKeyboarder.exe
 C:\Users\potato1\Documents\Visual Studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Release\midiKeyboarder.pdb
-C:\Users\potato1\Documents\Visual Studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Release\InputManager.dll
-C:\Users\potato1\Documents\Visual Studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Release\InputSimulator.dll
-C:\Users\potato1\Documents\Visual Studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Release\Midi.dll
-C:\Users\potato1\Documents\Visual Studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Release\InputSimulator.pdb
-C:\Users\potato1\Documents\Visual Studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Release\InputSimulator.xml
 C:\Users\potato1\Documents\Visual Studio 2013\Projects\midiKeyboarder\midiKeyboarder\bin\Release\Midi.xml
 C:\Users\potato1\Documents\Visual Studio 2013\Projects\midiKeyboarder\midiKeyboarder\obj\Release\midiKeyboarder.csprojResolveAssemblyReference.cache
 C:\Users\potato1\Documents\Visual Studio 2013\Projects\midiKeyboarder\midiKeyboarder\obj\Release\midiKeyboarder.Form1.resources
